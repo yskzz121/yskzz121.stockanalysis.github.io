@@ -1,0 +1,757 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Delta Air Lines FY2026 Q1 決算分析</title>
+<link rel="icon" type="image/png" href="../favicon.png">
+<link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho+B1:wght@500;700;800&family=Noto+Sans+JP:wght@300;400;500;700;900&family=Playfair+Display:wght@400;700;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<style>
+:root{
+  --bg:#0d1117;--card:#161b22;--border:#21262d;--border2:#30363d;
+  --text:#e6edf3;--text-sub:#8b949e;
+  --gold:#B8912A;--gold-light:#D4A843;--navy:#1A2540;--paper:#F5F2EC;
+  --green:#2ea043;--red:#f85149;--blue:#58a6ff;--purple:#bc8cff;--orange:#d29922;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Noto Sans JP',sans-serif;background:var(--bg);color:var(--text);padding:20px;line-height:1.7}
+.container{max-width:1200px;margin:0 auto}
+h1,h2,h3,.section-title{font-family:'Shippori Mincho B1',serif}
+
+/* Header — Atlas VI グラデーション背景 */
+.header{background:linear-gradient(135deg,#1a2332 0%,#1A2540 50%,#0F1829 100%);border-bottom:1px solid rgba(184,145,42,0.15);padding:40px 20px 30px;text-align:center;position:relative;overflow:hidden}
+.header::before{content:'';position:absolute;top:0;left:0;right:0;bottom:0;background:radial-gradient(ellipse at 30% 50%,rgba(184,145,42,0.08) 0%,transparent 60%),radial-gradient(ellipse at 70% 50%,rgba(184,145,42,0.06) 0%,transparent 60%)}
+.header-content{position:relative;z-index:1}
+.header h1{font-size:2.2em;font-weight:900;margin-bottom:4px}
+.header .subtitle{color:var(--text-sub);font-size:1.1em}
+.header .date{color:var(--text-sub);font-size:0.85em;margin-top:8px}
+.header-logo-row{display:flex;align-items:center;justify-content:center;gap:16px;margin-bottom:8px}
+.report-header-logo{height:48px;width:auto;max-width:180px;object-fit:contain;vertical-align:middle;margin-right:12px;opacity:.9;flex-shrink:0}
+.ticker-badge{display:inline-block;background:rgba(184,145,42,0.15);border:1px solid rgba(184,145,42,0.3);border-radius:8px;padding:6px 16px;font-size:14px;color:var(--gold);margin-bottom:12px;letter-spacing:1px;font-family:'Inter',sans-serif}
+
+/* Score */
+.score-section{text-align:center;padding:40px 20px;background:var(--card);border:1px solid var(--border);border-radius:16px;margin:24px 0}
+.score-big{font-size:5em;font-weight:900;line-height:1;font-family:'Playfair Display',serif}
+.score-label{font-size:1.5em;font-weight:700;margin-top:8px;font-family:'Shippori Mincho B1',serif}
+.score-reason{color:var(--text-sub);margin-top:12px;max-width:850px;margin-left:auto;margin-right:auto;font-size:0.95em;line-height:1.85}
+
+/* Section */
+.section{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:28px 24px;margin-bottom:20px;position:relative}
+.section-title{font-size:1.2em;font-weight:700;margin-bottom:20px;display:flex;align-items:center;gap:8px}
+.section-icon{font-size:1.1em}
+
+/* Grid */
+.metrics-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:20px}
+.metric-card{background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:12px;padding:16px;text-align:center}
+.metric-label{font-size:0.78em;color:var(--text-sub);margin-bottom:4px;font-family:'Noto Sans JP',sans-serif}
+.metric-value{font-size:1.45em;font-weight:700;font-family:'Playfair Display',serif}
+.metric-sub{font-size:0.75em;color:var(--text-sub);margin-top:2px;font-family:'Inter',sans-serif}
+.metric-beat{color:var(--green)}
+.metric-miss{color:var(--red)}
+
+/* Chart */
+.chart-container{position:relative;height:340px;margin:16px 0}
+.chart-row{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+
+/* Table */
+.tbl{width:100%;border-collapse:collapse;font-size:0.88em}
+.tbl th{background:rgba(255,255,255,0.04);padding:10px 12px;text-align:left;border-bottom:1px solid var(--border2);font-weight:500;color:var(--text-sub);white-space:nowrap;font-family:'Noto Sans JP',sans-serif}
+.tbl td{padding:10px 12px;border-bottom:1px solid var(--border);white-space:nowrap;font-family:'Inter',sans-serif}
+.tbl .pos{color:var(--green)}
+.tbl .neg{color:var(--red)}
+
+/* Two-col */
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+
+/* Card grid */
+.card-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+
+/* Valuation cards */
+.val-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.val-card{border-radius:14px;padding:24px;text-align:center;border:1px solid var(--border)}
+.val-card.low{background:linear-gradient(135deg,rgba(46,160,67,0.1),rgba(46,160,67,0.03));border-color:rgba(46,160,67,0.3)}
+.val-card.mid{background:linear-gradient(135deg,rgba(88,166,255,0.1),rgba(88,166,255,0.03));border-color:rgba(88,166,255,0.3)}
+.val-card.high{background:linear-gradient(135deg,rgba(188,140,255,0.1),rgba(188,140,255,0.03));border-color:rgba(188,140,255,0.3)}
+.val-card h3{font-size:0.9em;font-weight:500;color:var(--text-sub);margin-bottom:8px;font-family:'Noto Sans JP',sans-serif}
+.val-card .val-price{font-size:2.2em;font-weight:900;font-family:'Playfair Display',serif}
+.val-card.low .val-price{color:var(--green)}
+.val-card.mid .val-price{color:var(--blue)}
+.val-card.high .val-price{color:var(--purple)}
+.val-card .val-detail{font-size:0.8em;color:var(--text-sub);margin-top:8px;line-height:1.6;font-family:'Inter',sans-serif}
+.val-verdict{text-align:center;margin-top:20px;padding:16px;background:rgba(184,145,42,0.08);border:1px solid rgba(184,145,42,0.2);border-radius:12px;font-size:1.05em}
+
+/* Risk/Catalyst */
+.rc-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.rc-list{list-style:none;padding:0}
+.rc-list li{padding:8px 0;border-bottom:1px solid var(--border);font-size:0.9em;line-height:1.7}
+.rc-list li:last-child{border-bottom:none}
+.rc-list li::before{margin-right:8px}
+.risk-list li::before{content:'⚠';color:var(--red)}
+.catalyst-list li::before{content:'✦';color:var(--green)}
+
+/* Overview grid */
+.overview-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.overview-item{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);font-size:0.9em}
+.overview-item .ov-label{color:var(--text-sub);font-family:'Noto Sans JP',sans-serif}
+
+/* Tech grid */
+.tech-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:16px}
+.tech-card{background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:10px;padding:14px;text-align:center}
+.tech-card .tc-label{font-size:0.75em;color:var(--text-sub);font-family:'Noto Sans JP',sans-serif}
+.tech-card .tc-value{font-size:1.15em;font-weight:700;margin-top:4px;font-family:'Playfair Display',serif}
+.tech-badge{display:inline-block;padding:4px 12px;border-radius:6px;font-size:0.85em;font-weight:500}
+.tech-badge.bullish{background:rgba(46,160,67,0.15);color:var(--green);border:1px solid rgba(46,160,67,0.3)}
+.tech-badge.neutral{background:rgba(210,153,34,0.15);color:var(--orange);border:1px solid rgba(210,153,34,0.3)}
+.tech-badge.bearish{background:rgba(248,81,73,0.15);color:var(--red);border:1px solid rgba(248,81,73,0.3)}
+
+/* Comment */
+.comment-block{background:rgba(255,255,255,0.02);border-left:3px solid var(--gold);padding:16px 20px;border-radius:0 10px 10px 0;margin-bottom:14px}
+.comment-block .cb-name{font-weight:700;font-size:0.9em;color:var(--gold-light);margin-bottom:6px;font-family:'Noto Sans JP',sans-serif}
+.comment-block .cb-text{font-size:0.88em;color:var(--text-sub);line-height:1.85}
+
+/* Compare */
+.compare-arrow{font-size:1.4em;font-weight:700;margin:0 8px}
+.compare-row{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--border);font-size:0.92em}
+.compare-row:last-child{border-bottom:none}
+
+/* TradingView */
+.tradingview-widget-container{max-width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch;margin:16px auto;display:flex;justify-content:center}
+
+/* === Mobile Responsive === */
+@media(max-width:768px){
+  body{padding:12px!important}
+  .container{padding:12px}
+  .header{padding:28px 16px}
+  .header h1{font-size:1.4rem}
+  .header .subtitle{font-size:.95em}
+  .header-logo-row{flex-direction:column;gap:8px}
+  .report-header-logo{height:36px}
+  .ticker-badge{font-size:12px;padding:4px 12px}
+  .grid,.metrics-grid{grid-template-columns:1fr 1fr}
+  .val-grid,.val-cards,.risk-grid{grid-template-columns:1fr}
+  .chart-wrap,.chart-container{height:250px}
+  .section{padding:20px 16px}
+  .card-grid{grid-template-columns:1fr 1fr}
+  .two-col{grid-template-columns:1fr}
+  .rc-grid{grid-template-columns:1fr}
+  .metrics-grid{grid-template-columns:1fr 1fr!important}
+  .chart-row{grid-template-columns:1fr!important}
+  .overview-grid{grid-template-columns:1fr!important}
+  .tech-grid{grid-template-columns:1fr!important}
+  table{display:block;overflow-x:auto;-webkit-overflow-scrolling:touch}
+  .compare-table,.tech-table,.tbl{font-size:.78rem}
+  .portal-link{padding:6px 10px;font-size:.7rem}
+}
+@media(max-width:480px){
+  .grid,.metrics-grid,.card-grid{grid-template-columns:1fr!important}
+  .chart-row,.overview-grid,.tech-grid{grid-template-columns:1fr!important}
+  .header h1{font-size:1.2rem}
+  .score-big{font-size:3.5em}
+  .score-label{font-size:1.2em}
+  .section-title,.section-header{font-size:1rem}
+}
+
+/* === Accordion (mobile only) === */
+.section[data-accordion]{position:relative}
+.section[data-accordion] .section-title{cursor:pointer;user-select:none;padding-right:36px}
+.section[data-accordion] .section-title::after{content:'▼';position:absolute;right:20px;top:28px;font-size:.7em;color:var(--text-sub);transition:transform .25s}
+.section[data-accordion].collapsed .section-title::after{transform:rotate(-90deg)}
+.section[data-accordion] .section-body{overflow:visible;transition:max-height .35s ease,opacity .25s ease;max-height:6000px;opacity:1}
+.section[data-accordion].collapsing .section-body{overflow:hidden}
+.section[data-accordion].collapsed .section-body{max-height:0;overflow:hidden;opacity:0;margin:0;padding:0}
+
+/* === TOC Nav (mobile only) === */
+.toc-nav{display:none}
+@media(max-width:768px){
+  .toc-nav{display:block;position:fixed;bottom:0;left:0;right:0;z-index:998;background:#1A2540;border-top:1px solid rgba(184,145,42,0.15);box-shadow:0 -2px 12px rgba(0,0,0,.3)}
+  .toc-toggle{position:fixed;bottom:16px;right:16px;z-index:999;width:48px;height:48px;border-radius:50%;background:#B8912A;color:#0F1829;border:none;font-size:1.2rem;cursor:pointer;box-shadow:0 2px 12px rgba(0,0,0,.4);display:flex;align-items:center;justify-content:center;transition:all .2s}
+  .toc-toggle.open{border-radius:12px 12px 0 0;bottom:0;right:0;left:0;width:100%;height:44px;font-size:.9rem}
+  .toc-menu{max-height:0;overflow:hidden;transition:max-height .3s ease}
+  .toc-menu.open{max-height:60vh;overflow-y:auto;-webkit-overflow-scrolling:touch}
+  .toc-list{list-style:none;padding:8px 0;margin:0}
+  .toc-list li{border-bottom:1px solid #21262d}
+  .toc-list li:last-child{border-bottom:none}
+  .toc-list a{display:flex;align-items:center;gap:10px;padding:12px 20px;color:#e6edf3;text-decoration:none;font-size:.85rem;transition:background .15s}
+  .toc-list a:hover,.toc-list a:active{background:rgba(88,166,255,.1)}
+  .toc-list .toc-icon{font-size:1.1em;flex-shrink:0;width:24px;text-align:center}
+  .toc-list .toc-label{flex:1}
+  .toc-expand-all{display:flex;justify-content:center;gap:12px;padding:10px 16px;border-bottom:1px solid #21262d}
+  .toc-expand-all button{font-family:'Noto Sans JP',sans-serif;font-size:.75rem;padding:4px 14px;border-radius:6px;border:1px solid #30363d;background:transparent;color:#8b949e;cursor:pointer}
+  .toc-expand-all button:active{background:#B8912A;color:#0F1829}
+  body{padding-bottom:60px!important}
+}
+</style>
+</head>
+<body>
+<div class="container">
+
+<!-- Header -->
+<div class="header">
+  <div class="header-content">
+    <div class="header-logo-row">
+      <div class="ticker-badge">NYSE: DAL</div>
+    </div>
+    <h1>Delta Air Lines 決算分析</h1>
+    <div class="subtitle">FY2026 Q1（2026年1月1日〜3月31日）</div>
+    <div class="date">発表日: 2026年4月8日 ｜ レポート作成: 2026年4月9日</div>
+  </div>
+</div>
+
+<!-- 1. Score -->
+<div class="score-section">
+  <div class="score-big">3 <span style="font-size:0.6em">⏸️</span></div>
+  <div class="score-label">悪くない決算</div>
+  <div class="score-reason">調整後売上 $14.2B（YoY +9.4%）はコンセンサス $13.94B を上回りビート、調整後EPS $0.64（YoY +44%）はほぼインライン。営業利益率4.6%は自社ガイドの低位レンジで着地。一方、Q2ガイダンスEPS $1.00–1.50 の中央値$1.25 はsell-side予想（~$1.67）を25%下回り、通期EPSガイダンス（$6.50–7.50）は燃料急騰を理由に撤回。GAAPでは$550Mのマーク・トゥ・マーケット投資損失で純損失$0.44/株となった。にもかかわらず、3〜4月のキャッシュセールス+ダブル%、法人売上過去最高、プレミアム+mid teens、メインキャビンが2024年末以来初のユニット収入プラス、リファイナリー恩恵$300M、機材95機追加発注、容量フラットへの引き締めなど経営の機敏な対応が評価され、株価は決算後+12.2%の$73.05へ急騰。需要構造は依然強固ながら燃料2倍化の不透明性により慎重姿勢。</div>
+</div>
+
+<!-- 2. Key Metrics -->
+<div class="metrics-grid">
+  <div class="metric-card">
+    <div class="metric-label">調整後売上高</div>
+    <div class="metric-value">$14.2B</div>
+    <div class="metric-sub metric-beat">YoY +9.4% | ビート +1.9%</div>
+  </div>
+  <div class="metric-card">
+    <div class="metric-label">調整後EPS</div>
+    <div class="metric-value">$0.64</div>
+    <div class="metric-sub metric-beat">YoY +44% | 概ねインライン</div>
+  </div>
+  <div class="metric-card">
+    <div class="metric-label">GAAP売上高</div>
+    <div class="metric-value">$15.85B</div>
+    <div class="metric-sub metric-beat">YoY +12.9%</div>
+  </div>
+  <div class="metric-card">
+    <div class="metric-label">GAAP EPS</div>
+    <div class="metric-value metric-miss">($0.44)</div>
+    <div class="metric-sub metric-miss">投資 mark-to-market $550M損失</div>
+  </div>
+  <div class="metric-card">
+    <div class="metric-label">調整後営業利益率</div>
+    <div class="metric-value">4.6%</div>
+    <div class="metric-sub">自社ガイド 4.5–6% 低位</div>
+  </div>
+  <div class="metric-card">
+    <div class="metric-label">FCF</div>
+    <div class="metric-value" style="color:var(--green)">$1.2B</div>
+    <div class="metric-sub">営業CF $2.4B</div>
+  </div>
+  <div class="metric-card">
+    <div class="metric-label">時価総額</div>
+    <div class="metric-value">$43.6B</div>
+    <div class="metric-sub">配当利回り 約1.0%</div>
+  </div>
+  <div class="metric-card">
+    <div class="metric-label">株価（4/8終値）</div>
+    <div class="metric-value" style="color:var(--green)">$73.05</div>
+    <div class="metric-sub metric-beat">決算後 +12.2%（前日 $65.62）</div>
+  </div>
+</div>
+
+<!-- 3. Revenue / EPS Chart -->
+<div class="section" id="sec-revenue" data-accordion>
+  <div class="section-title"><span class="section-icon">📊</span> 売上高 / EPS 7四半期推移</div>
+  <div class="section-body">
+    <div class="chart-row">
+      <div><div class="chart-container"><canvas id="revenueChart"></canvas></div></div>
+      <div><div class="chart-container"><canvas id="epsChart"></canvas></div></div>
+    </div>
+    <div style="margin-top:12px;padding:10px 14px;background:rgba(184,145,42,0.06);border:1px solid rgba(184,145,42,0.18);border-radius:10px;font-size:0.82em;color:var(--text-sub)">
+      ※ 売上高=GAAP総売上高（リファイナリー第三者販売含む）、EPS=調整後（Non-GAAP）。FY26Q1は中東情勢に起因する燃料急騰を吸収しつつもEPSが季節要因で前四半期比大幅減の典型的Q1パターン。
+    </div>
+  </div>
+</div>
+
+<!-- 4. Margin Trend -->
+<div class="section" id="sec-margin" data-accordion>
+  <div class="section-title"><span class="section-icon">📈</span> 利益率トレンド</div>
+  <div class="section-body">
+    <table class="tbl">
+      <thead>
+        <tr><th>指標</th><th>Q1 FY2026</th><th>Q1 FY2025</th><th>YoY変化</th><th>Q4 FY2025</th><th>QoQ変化</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>調整後営業利益率</td><td>4.6%</td><td>5.1%</td><td class="neg">-50bps</td><td>10.1%</td><td class="neg">-550bps（季節要因）</td></tr>
+        <tr><td>GAAP営業利益率</td><td>3.2%</td><td>約3.3%</td><td class="neg">-10bps</td><td>約9.8%</td><td class="neg">-660bps</td></tr>
+        <tr><td>調整後税前利益率</td><td>3.7%</td><td>約3.0%</td><td class="pos">+70bps</td><td>約9.6%</td><td class="neg">-590bps</td></tr>
+        <tr><td>ジェット燃料単価</td><td>$2.62/gal</td><td>約$2.50/gal</td><td class="neg">+$0.12（refinery $0.06恩恵込）</td><td>約$2.30/gal</td><td class="neg">+$0.32</td></tr>
+      </tbody>
+    </table>
+    <div style="margin-top:16px;padding:12px 16px;background:rgba(248,81,73,0.08);border:1px solid rgba(248,81,73,0.2);border-radius:10px;font-size:0.88em;color:var(--text-sub)">
+      営業利益率4.6%は自社ガイド4.5–6%の低位で着地。中東情勢を契機としたジェット燃料価格上昇（年初比約2倍）が主因。CFO Dan Janki「燃料は当初想定より40セント高で着地、リファイナリー恩恵$0.06/gal含む」。Q2はリファイナリー恩恵が$300Mに拡大予定。
+    </div>
+  </div>
+</div>
+
+<!-- 5. Consensus -->
+<div class="section" id="sec-consensus" data-accordion>
+  <div class="section-title"><span class="section-icon">🎯</span> コンセンサス比較・ガイダンス</div>
+  <div class="section-body">
+    <div class="two-col">
+      <div>
+        <h4 style="font-size:0.95em;margin-bottom:12px;color:var(--text-sub);font-family:'Noto Sans JP',sans-serif">Q1 FY2026 実績 vs コンセンサス</h4>
+        <table class="tbl">
+          <thead><tr><th>指標</th><th>実績</th><th>コンセンサス</th><th>差分</th></tr></thead>
+          <tbody>
+            <tr><td>調整後売上</td><td>$14.20B</td><td>$13.94B</td><td class="pos">+$260M (+1.9%)</td></tr>
+            <tr><td>調整後EPS</td><td>$0.64</td><td>$0.61–$0.65</td><td>ほぼインライン</td></tr>
+            <tr><td>営業利益率</td><td>4.6%</td><td>5.0%</td><td class="neg">-40bps</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div>
+        <h4 style="font-size:0.95em;margin-bottom:12px;color:var(--text-sub);font-family:'Noto Sans JP',sans-serif">Q2 FY2026 ガイダンス</h4>
+        <table class="tbl">
+          <thead><tr><th>項目</th><th>ガイダンス</th><th>vs sell-side</th></tr></thead>
+          <tbody>
+            <tr><td>売上成長率</td><td class="pos">+low teens % YoY</td><td class="pos">堅調</td></tr>
+            <tr><td>調整後EPS</td><td>$1.00 – $1.50</td><td class="neg">中央$1.25 vs予想$1.67（-25%）</td></tr>
+            <tr><td>調整後営業利益率</td><td>6 – 8%</td><td class="neg">予想下限</td></tr>
+            <tr><td>容量（ASM）</td><td class="neg">フラット YoY</td><td class="neg">下方修正（追加削減バイアス）</td></tr>
+            <tr><td>燃料単価想定</td><td class="neg">~$4.30/gal</td><td class="neg">前年比約2倍</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div style="margin-top:16px;padding:12px 16px;background:rgba(248,81,73,0.08);border:1px solid rgba(248,81,73,0.2);border-radius:10px;font-size:0.88em;color:var(--text-sub)">
+      <strong>通期FY2026ガイダンス撤回</strong>: 当初EPS $6.50–7.50を提示していたが、燃料変動性を理由に更新を見送り。経営陣は「$2B超の燃料逆風のうち40–50%を価格転嫁・リファイナリー・容量規律で奪還」と説明。
+    </div>
+  </div>
+</div>
+
+<!-- 6. Cash Flow -->
+<div class="section" id="sec-cashflow" data-accordion>
+  <div class="section-title"><span class="section-icon">💰</span> キャッシュフロー / バランスシート</div>
+  <div class="section-body">
+    <table class="tbl">
+      <thead><tr><th>項目</th><th>Q1 FY2026</th><th>Q1 FY2025</th><th>YoY</th><th>備考</th></tr></thead>
+      <tbody>
+        <tr><td>営業CF</td><td>$2.4B</td><td>約$2.1B</td><td class="pos">+14%</td><td>季節的に最強の四半期</td></tr>
+        <tr><td>FCF</td><td>$1.2B</td><td>約$1.3B</td><td class="neg">-8%</td><td>capex増加の影響</td></tr>
+        <tr><td>FCF/売上マージン</td><td>7.7%</td><td>約9.3%</td><td class="neg">-160bps</td><td>機材投資加速</td></tr>
+        <tr><td>調整後純有利子負債</td><td>$13.5B</td><td>約$15.0B</td><td class="pos">-10%</td><td><span class="pos">2019年以下の水準</span></td></tr>
+        <tr><td>従業員利益分配</td><td colspan="4">$1.3B（業界他社合計を上回る）</td></tr>
+        <tr><td>追加機材発注</td><td colspan="4">95機（機材近代化加速）</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- 7. Segment / Channel -->
+<div class="section" id="sec-segment" data-accordion>
+  <div class="section-title"><span class="section-icon">🏢</span> 部門別売上構成（プレミアム / メインキャビン / 関連事業）</div>
+  <div class="section-body">
+    <table class="tbl">
+      <thead><tr><th>部門</th><th>YoY成長</th><th>備考</th></tr></thead>
+      <tbody>
+        <tr><td>プレミアム</td><td class="pos">+mid teens %</td><td>新機材は座席の~50%がプレミアム（旧機材~30%）</td></tr>
+        <tr><td>メインキャビン</td><td class="pos">+ユニット収入プラス</td><td><span class="pos">2024年末以来初の反転（重要な変曲点）</span></td></tr>
+        <tr><td>法人売上</td><td class="pos">+ダブル digit</td><td>四半期過去最高。NY/LA/Boston/Seattleで強い</td></tr>
+        <tr><td>ロイヤルティ（American Express）</td><td class="pos">堅調成長</td><td>カードリミット拡大効果</td></tr>
+        <tr><td>カーゴ</td><td class="pos">回復基調</td><td>—</td></tr>
+        <tr><td>MRO（整備事業）</td><td class="pos">$380M（YoY 2倍超）</td><td>通期$1.2B目標、収益多様化の柱</td></tr>
+      </tbody>
+    </table>
+    <div style="margin-top:14px;padding:12px 16px;background:rgba(46,160,67,0.08);border:1px solid rgba(46,160,67,0.2);border-radius:10px;font-size:0.88em;color:var(--text-sub)">
+      <strong>重要トピック</strong>: 高単価セグメント（プレミアム/法人/ロイヤルティ）が引き続き成長ドライバー。一方で需要の弱点は「メキシコレジャー（治安事案）」「欧州ポイントオブセール」のみ。需要構造は依然強固。
+    </div>
+  </div>
+</div>
+
+<!-- 8. Geographic -->
+<div class="section" id="sec-geo" data-accordion>
+  <div class="section-title"><span class="section-icon">🌍</span> 地域別売上動向</div>
+  <div class="section-body">
+    <table class="tbl">
+      <thead><tr><th>地域</th><th>動向</th><th>コメント</th></tr></thead>
+      <tbody>
+        <tr><td>米国国内</td><td class="pos">堅調</td><td>法人需要主導、3〜4月キャッシュセールス+ダブル%</td></tr>
+        <tr><td>大西洋路線</td><td class="pos">Bright spot</td><td>欧州一部弱いが、近接プレミアム需要が極めて強い</td></tr>
+        <tr><td>太平洋路線</td><td class="pos">Very durable</td><td>日本・中国・仁川（韓国）で強い</td></tr>
+        <tr><td>中南米</td><td class="neg">混合</td><td>メキシコレジャー軟調（治安）、その他は堅調</td></tr>
+        <tr><td>中東迂回需要</td><td class="pos">強い</td><td>近接プレミアム/ビジネスプロダクトで「very strong」（CCO Esposito）</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- 9. Overview -->
+<div class="section" id="sec-overview" data-accordion>
+  <div class="section-title"><span class="section-icon">🏗️</span> 企業概要・外部環境</div>
+  <div class="section-body">
+    <div class="overview-grid">
+      <div>
+        <h4 style="color:var(--gold-light);margin-bottom:10px;font-family:'Noto Sans JP',sans-serif">企業プロフィール</h4>
+        <div class="overview-item"><span class="ov-label">本社</span><span>米ジョージア州アトランタ</span></div>
+        <div class="overview-item"><span class="ov-label">設立</span><span>1924年（創業100年超）</span></div>
+        <div class="overview-item"><span class="ov-label">CEO</span><span>Ed Bastian</span></div>
+        <div class="overview-item"><span class="ov-label">CFO</span><span>Dan Janki</span></div>
+        <div class="overview-item"><span class="ov-label">CCO</span><span>Joe Esposito</span></div>
+        <div class="overview-item"><span class="ov-label">従業員数</span><span>約10万人</span></div>
+        <div class="overview-item"><span class="ov-label">運航地点</span><span>全世界290都市超</span></div>
+        <div class="overview-item"><span class="ov-label">主要ハブ</span><span>ATL/DTW/JFK/LAX/MSP/SEA/SLC/BOS</span></div>
+      </div>
+      <div>
+        <h4 style="color:var(--gold-light);margin-bottom:10px;font-family:'Noto Sans JP',sans-serif">業界・マクロ環境</h4>
+        <div class="overview-item"><span class="ov-label">業界ポジション</span><span>北米3大ネットワークキャリア（United/Americanと並ぶ）</span></div>
+        <div class="overview-item"><span class="ov-label">差別化</span><span>プレミアム比率の高さ・ロイヤルティ収入・MRO・リファイナリー垂直統合</span></div>
+        <div class="overview-item"><span class="ov-label">主要競合</span><span>UAL, AAL, LUV, JBLU</span></div>
+        <div class="overview-item"><span class="ov-label">最大の外部リスク</span><span>ジェット燃料価格（年初比~2倍化）</span></div>
+        <div class="overview-item"><span class="ov-label">追い風</span><span>プレミアム需要、法人需要回復、業界統合期待</span></div>
+        <div class="overview-item"><span class="ov-label">規制環境</span><span>FAA/DOT、Open Skies協定、空港スロット</span></div>
+        <div class="overview-item"><span class="ov-label">技術トレンド</span><span>Delta Sync デジタル（2026目標1.1億ログイン）、Project Kuiper衛星接続</span></div>
+        <div class="overview-item"><span class="ov-label">機材戦略</span><span>新規95機追加発注で更新加速</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 10. Technical -->
+<div class="section" id="sec-technical" data-accordion>
+  <div class="section-title"><span class="section-icon">📉</span> テクニカル分析</div>
+  <div class="section-body">
+    <div class="tradingview-widget-container">
+      <div class="tradingview-widget-container__widget"></div>
+      <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js" async>
+      {
+        "autosize": false,
+        "width": 1100,
+        "height": 750,
+        "symbol": "NYSE:DAL",
+        "interval": "D",
+        "timezone": "Asia/Tokyo",
+        "theme": "dark",
+        "style": "1",
+        "locale": "ja",
+        "backgroundColor": "rgba(13, 17, 23, 1)",
+        "gridColor": "rgba(48, 54, 61, 0.3)",
+        "range": "6M",
+        "hide_top_toolbar": false,
+        "hide_legend": false,
+        "allow_symbol_change": false,
+        "save_image": true,
+        "calendar": false,
+        "hide_volume_indicator": false,
+        "withdateranges": true,
+        "support_host": "https://www.tradingview.com",
+        "studies": [
+          "MASimple@tv-basicstudies",
+          "MAExp@tv-basicstudies"
+        ],
+        "studies_overrides": {
+          "moving average.length": 50,
+          "moving average exponential.length": 200
+        }
+      }
+      </script>
+    </div>
+    <div class="tech-grid">
+      <div class="tech-card"><div class="tc-label">現在株価</div><div class="tc-value">$73.05</div></div>
+      <div class="tech-card"><div class="tc-label">52週高値</div><div class="tc-value">$76.39</div></div>
+      <div class="tech-card"><div class="tc-label">52週安値</div><div class="tc-value">$36.56</div></div>
+      <div class="tech-card"><div class="tc-label">52週高値からの乖離</div><div class="tc-value" style="color:var(--orange)">-4.4%</div></div>
+      <div class="tech-card"><div class="tc-label">決算後反応</div><div class="tc-value" style="color:var(--green)">+12.2%</div></div>
+      <div class="tech-card"><div class="tc-label">出来高</div><div class="tc-value" style="color:var(--green)">急増</div></div>
+    </div>
+    <div style="margin-top:18px;text-align:center">
+      <span class="tech-badge bullish">総合判定: 強気（短中期）</span>
+    </div>
+    <div style="margin-top:14px;padding:12px 16px;background:rgba(46,160,67,0.06);border:1px solid rgba(46,160,67,0.2);border-radius:10px;font-size:0.88em;color:var(--text-sub)">
+      <strong>テクニカル所見</strong>: 4/8決算後ギャップアップで$73台に急騰し、52週高値$76.39を視野に。直前まで$65–66の調整局面（高値から-23%）にあったため、決算反応はリリーフラリー的色彩が強い。50日線を上回り、200日線（推定$60前半）から大きく乖離する強気形状。RSIは過熱領域接近、出来高急増は機関投資家の参戦を示唆。次の節目は$76.39（52週高値）→ アナリスト目標中央値 $78.47 → $80大台。サポートは50日線推定$67–68付近。
+    </div>
+  </div>
+</div>
+
+<!-- 11. Management Comments -->
+<div class="section" id="sec-mgmt" data-accordion>
+  <div class="section-title"><span class="section-icon">💬</span> 経営陣コメント・カンファレンスコール</div>
+  <div class="section-body">
+    <div class="comment-block">
+      <div class="cb-name">Ed Bastian — CEO</div>
+      <div class="cb-text">「前年比40%以上のEPS増加を達成。燃料逆風と業務的な混乱にもかかわらず、強い需要とDeltaの従業員パフォーマンスがそれを可能にした。当四半期に容量を意義ある水準で削減し、燃料環境が改善するまでは下方バイアスを維持する。歴史的に高燃料は業界統合を促進し、Deltaを有利にしてきた。$1.3Bの従業員利益分配は業界他社合計を上回る」</div>
+    </div>
+    <div class="comment-block">
+      <div class="cb-name">Dan Janki — CFO</div>
+      <div class="cb-text">「過去最高のMarch四半期売上、営業利益率4.6%、EPS $0.64を達成。燃料は$2.62/gallon（リファイナリー恩恵$0.06/gal含む）、当初想定より40セント高で着地。Q2は燃料が約$4.30/gallon（前年比約2倍）を想定するが、リファイナリー恩恵は$300Mに拡大する見通し。MRO事業はQ1で$380M（前年比2倍超）、通期$1.2B目標」</div>
+    </div>
+    <div class="comment-block">
+      <div class="cb-name">Joe Esposito — Chief Commercial Officer</div>
+      <div class="cb-text">「プレミアム収入はmid-teens成長。新機材は座席の約50%がプレミアム（旧機材30%）。メインキャビンは2024年末以来初めてユニット収入がプラスに転じ、重要な変曲点となった。3月のキャッシュセールスはダブル digit成長で4月も継続。ブッキングカーブ・地理・プロダクト全方位で堅調。中東を回避するコネクションで近接プレミアム/ビジネス需要は『very strong』」</div>
+    </div>
+    <div class="comment-block">
+      <div class="cb-name">機材・接続性戦略</div>
+      <div class="cb-text">95機の追加発注で機材近代化を加速。Sky Clubネットワーク拡張、Project Kuiper（衛星接続）パートナーシップを発表。Delta Syncデジタルプラットフォームは2026年に1.1億ログイン目標。長期財務目標は予定通り推進。</div>
+    </div>
+  </div>
+</div>
+
+<!-- 12. Risk / Catalyst -->
+<div class="section" id="sec-risk" data-accordion>
+  <div class="section-title"><span class="section-icon">⚠️</span> リスク・カタリスト</div>
+  <div class="section-body">
+    <div class="rc-grid">
+      <div>
+        <h4 style="color:var(--red);margin-bottom:12px;font-family:'Noto Sans JP',sans-serif">リスク要因</h4>
+        <ul class="rc-list risk-list">
+          <li>ジェット燃料価格 — Q2想定$4.30/gal前提（前年比~2倍）。中東情勢の悪化次第でさらに上振れ余地</li>
+          <li>通期FY2026ガイダンス撤回 — 不確実性が増し、目標株価設定が困難化</li>
+          <li>Q2 EPSガイダンス中央$1.25 — sell-side予想$1.67を25%下回る</li>
+          <li>容量削減バイアス — 規模の経済縮小、ユニットコスト悪化リスク</li>
+          <li>地政学的リスク — イラン情勢継続、欧州ポイントオブセール軟化</li>
+          <li>メキシコレジャー需要軟調 — 治安事案の影響継続</li>
+          <li>パイロット契約コスト・人件費インフレ</li>
+          <li>下半期の信頼性・リカバリー課題（経営陣自認）</li>
+        </ul>
+      </div>
+      <div>
+        <h4 style="color:var(--green);margin-bottom:12px;font-family:'Noto Sans JP',sans-serif">カタリスト</h4>
+        <ul class="rc-list catalyst-list">
+          <li>プレミアム/法人需要のレジリエンス — 過去最高の法人売上、メインキャビン反転</li>
+          <li>リファイナリー恩恵 $300M（Q2） — 燃料逆風の一部相殺</li>
+          <li>機材95機追加発注 — 燃費効率改善、座席プレミアム比率向上</li>
+          <li>業界統合期待 — 高燃料環境は規模の劣る競合を圧迫、Deltaに有利</li>
+          <li>MRO事業急拡大 — Q1 $380M → 通期$1.2B、収益多様化</li>
+          <li>調整後純有利子負債 $13.5B → 2019年以下の財務体質</li>
+          <li>Delta Syncデジタルプラットフォーム拡張</li>
+          <li>マーク・トゥ・マーケット$550M損失剥落 → 次四半期GAAP正常化</li>
+          <li>Project Kuiper衛星接続 → 機内体験差別化</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 13. Compare -->
+<div class="section" id="sec-compare" data-accordion>
+  <div class="section-title"><span class="section-icon">🔄</span> 前回決算（FY25Q4）との比較</div>
+  <div class="section-body">
+    <table class="tbl">
+      <thead><tr><th>項目</th><th>FY25Q4（前回）</th><th>FY26Q1（今回）</th><th>トレンド</th></tr></thead>
+      <tbody>
+        <tr><td>総合スコア</td><td>4 📈 良い決算</td><td>3 ⏸️ 悪くない決算</td><td class="neg">↓ 悪化</td></tr>
+        <tr><td>GAAP売上</td><td>$16.00B</td><td>$15.85B</td><td class="neg">→ 季節要因</td></tr>
+        <tr><td>調整後EPS</td><td>$1.55</td><td>$0.64</td><td class="neg">↓ 季節要因＋燃料</td></tr>
+        <tr><td>調整後営業利益率</td><td>10.1%</td><td>4.6%</td><td class="neg">↓ -550bps（季節＋燃料）</td></tr>
+        <tr><td>FCF（四半期）</td><td>$1.80B</td><td>$1.20B</td><td class="neg">↓</td></tr>
+        <tr><td>通期ガイダンス</td><td>EPS $6.50–$7.50提示</td><td class="neg">撤回</td><td class="neg">↓ 不確実性増</td></tr>
+        <tr><td>燃料単価</td><td>約$2.30/gal</td><td>$2.62/gal</td><td class="neg">+$0.32（中東情勢）</td></tr>
+        <tr><td>株価反応</td><td>-3.6%</td><td class="pos">+12.2%</td><td class="pos">↑ リリーフラリー</td></tr>
+        <tr><td>需要トーン</td><td>強い</td><td>強い（プレミアム/法人特に）</td><td>→ 維持</td></tr>
+      </tbody>
+    </table>
+    <div style="margin-top:14px;padding:12px 16px;background:rgba(184,145,42,0.06);border:1px solid rgba(184,145,42,0.18);border-radius:10px;font-size:0.88em;color:var(--text-sub)">
+      <strong>変化の主因</strong>: 業績数値そのものは季節要因と中東情勢起因の燃料急騰で悪化したが、需要基盤は依然強固。スコア低下の主因は「通期ガイダンス撤回」による不確実性増。一方で経営の機敏な容量規律、リファイナリー恩恵、過去最高の法人売上などポジティブ材料も多く、株価は決算後+12%のリリーフラリー。
+    </div>
+  </div>
+</div>
+
+<!-- 14. Valuation -->
+<div class="section" id="sec-valuation" data-accordion>
+  <div class="section-title"><span class="section-icon">💎</span> バリュエーション（想定株価3シナリオ）</div>
+  <div class="section-body">
+    <div class="val-cards">
+      <div class="val-card low">
+        <h3>LOW（保守的）</h3>
+        <div class="val-price">$40</div>
+        <div class="val-detail">FY26 EPS $5.00 × PER 8x<br>燃料$5/gal継続、容量大幅削減シナリオ</div>
+      </div>
+      <div class="val-card mid">
+        <h3>MID（基本）</h3>
+        <div class="val-price">$70</div>
+        <div class="val-detail">FY26 EPS $6.30 × PER 11x<br>燃料$4.30/gal前提、Q2ガイダンス達成シナリオ</div>
+      </div>
+      <div class="val-card high">
+        <h3>HIGH（楽観的）</h3>
+        <div class="val-price">$98</div>
+        <div class="val-detail">FY26 EPS $7.50 × PER 13x<br>燃料正常化、業界統合進展シナリオ</div>
+      </div>
+    </div>
+    <div class="val-verdict">
+      <strong>判定: 適正〜やや割高</strong> ｜ 現在株価 $73.05 vs MID想定 $70 → 乖離率 -4.2%（適正レンジ内）<br>
+      <span style="font-size:0.85em;color:var(--text-sub)">アナリスト目標株価（中央値 $78.47）との乖離は +7.4%。UBS $84 / Barclays $85 / Wells Fargo $75 / TD Cowen $76。コンセンサスレーティングは Strong Buy（25 buy / 0 sell）。</span>
+    </div>
+    <div style="margin-top:14px;padding:12px 16px;background:rgba(248,81,73,0.06);border:1px solid rgba(248,81,73,0.18);border-radius:10px;font-size:0.82em;color:var(--text-sub)">
+      ※ FY2026通期ガイダンスが撤回されたため、本バリュエーションはアナリストコンセンサスEPS推定とDAL過去の航空セクターPERレンジ（8–13x）に基づく試算。燃料価格次第で大きく変動する点に留意。
+    </div>
+  </div>
+</div>
+
+</div><!-- /container -->
+
+<style>
+.portal-link{position:fixed;top:16px;left:16px;z-index:999;display:flex;align-items:center;gap:6px;padding:8px 14px;border-radius:8px;background:#1A2540;border:1px solid rgba(184,145,42,0.2);color:#D4A843;text-decoration:none;font-size:.78rem;font-weight:500;font-family:"Noto Sans JP",sans-serif;transition:all .15s;box-shadow:0 2px 8px rgba(0,0,0,.15)}
+.portal-link:hover{background:#B8912A;color:#0F1829;border-color:#B8912A}
+.portal-link svg{flex-shrink:0}
+</style>
+<a class="portal-link" href="https://atlas-financials.jp/reports/">
+<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>ポータル</a>
+
+<!-- TOC Navigation (mobile) -->
+<nav class="toc-nav" id="tocNav">
+  <div class="toc-menu" id="tocMenu">
+    <div class="toc-expand-all">
+      <button onclick="toggleAllSections(true)">すべて展開</button>
+      <button onclick="toggleAllSections(false)">すべて折りたたむ</button>
+    </div>
+    <ul class="toc-list">
+      <li><a href="#sec-revenue" onclick="tocJump('sec-revenue')"><span class="toc-icon">📊</span><span class="toc-label">売上高 / EPS 7四半期推移</span></a></li>
+      <li><a href="#sec-margin" onclick="tocJump('sec-margin')"><span class="toc-icon">📈</span><span class="toc-label">利益率トレンド</span></a></li>
+      <li><a href="#sec-consensus" onclick="tocJump('sec-consensus')"><span class="toc-icon">🎯</span><span class="toc-label">コンセンサス比較</span></a></li>
+      <li><a href="#sec-cashflow" onclick="tocJump('sec-cashflow')"><span class="toc-icon">💰</span><span class="toc-label">キャッシュフロー</span></a></li>
+      <li><a href="#sec-segment" onclick="tocJump('sec-segment')"><span class="toc-icon">🏢</span><span class="toc-label">部門別売上構成</span></a></li>
+      <li><a href="#sec-geo" onclick="tocJump('sec-geo')"><span class="toc-icon">🌍</span><span class="toc-label">地域別売上動向</span></a></li>
+      <li><a href="#sec-overview" onclick="tocJump('sec-overview')"><span class="toc-icon">🏗️</span><span class="toc-label">企業概要</span></a></li>
+      <li><a href="#sec-technical" onclick="tocJump('sec-technical')"><span class="toc-icon">📉</span><span class="toc-label">テクニカル分析</span></a></li>
+      <li><a href="#sec-mgmt" onclick="tocJump('sec-mgmt')"><span class="toc-icon">💬</span><span class="toc-label">経営陣コメント</span></a></li>
+      <li><a href="#sec-risk" onclick="tocJump('sec-risk')"><span class="toc-icon">⚠️</span><span class="toc-label">リスク・カタリスト</span></a></li>
+      <li><a href="#sec-compare" onclick="tocJump('sec-compare')"><span class="toc-icon">🔄</span><span class="toc-label">前回決算比較</span></a></li>
+      <li><a href="#sec-valuation" onclick="tocJump('sec-valuation')"><span class="toc-icon">💎</span><span class="toc-label">バリュエーション</span></a></li>
+    </ul>
+  </div>
+</nav>
+<button class="toc-toggle" id="tocToggle" onclick="toggleToc()">☰</button>
+
+<script>
+// === Chart.js ===
+var quarters = ["Q3'24","Q4'24","Q1'25","Q2'25","Q3'25","Q4'25","Q1'26"];
+var revData = [15.68,15.56,14.00,16.50,15.70,16.00,15.85];
+var epsData = [1.50,1.85,0.46,2.10,1.71,1.55,0.64];
+
+Chart.defaults.color = '#8b949e';
+Chart.defaults.borderColor = 'rgba(48,54,61,0.5)';
+Chart.defaults.font.family = "'Inter','Noto Sans JP',sans-serif";
+
+new Chart(document.getElementById('revenueChart'),{
+  type:'bar',
+  data:{
+    labels:quarters,
+    datasets:[{
+      label:'GAAP総売上高 ($B)',
+      data:revData,
+      backgroundColor:revData.map(function(v,i){return i===revData.length-1?'rgba(184,145,42,0.85)':'rgba(184,145,42,0.35)'}),
+      borderColor:'rgba(184,145,42,1)',
+      borderWidth:1,
+      borderRadius:4
+    }]
+  },
+  options:{
+    responsive:true,
+    maintainAspectRatio:false,
+    plugins:{
+      title:{display:true,text:'GAAP売上高推移（7四半期）',font:{size:14,weight:'bold',family:"'Shippori Mincho B1',serif"},color:'#e6edf3'},
+      legend:{display:false},
+      tooltip:{callbacks:{label:function(ctx){return '$'+ctx.parsed.y.toFixed(2)+'B'}}}
+    },
+    scales:{
+      y:{beginAtZero:false,min:13,max:17,ticks:{callback:function(v){return '$'+v.toFixed(1)+'B'}},grid:{color:'rgba(48,54,61,0.3)'}},
+      x:{grid:{display:false},ticks:{font:{family:"'Inter',sans-serif",size:11}}}
+    }
+  }
+});
+
+new Chart(document.getElementById('epsChart'),{
+  type:'bar',
+  data:{
+    labels:quarters,
+    datasets:[{
+      label:'調整後EPS ($)',
+      data:epsData,
+      backgroundColor:epsData.map(function(v,i){return i===epsData.length-1?'rgba(46,160,67,0.85)':'rgba(46,160,67,0.35)'}),
+      borderColor:'rgba(46,160,67,1)',
+      borderWidth:1,
+      borderRadius:4
+    }]
+  },
+  options:{
+    responsive:true,
+    maintainAspectRatio:false,
+    plugins:{
+      title:{display:true,text:'調整後EPS推移（7四半期）',font:{size:14,weight:'bold',family:"'Shippori Mincho B1',serif"},color:'#e6edf3'},
+      legend:{display:false},
+      tooltip:{callbacks:{label:function(ctx){return '$'+ctx.parsed.y.toFixed(2)}}}
+    },
+    scales:{
+      y:{beginAtZero:true,ticks:{callback:function(v){return '$'+v.toFixed(2)}},grid:{color:'rgba(48,54,61,0.3)'}},
+      x:{grid:{display:false},ticks:{font:{family:"'Inter',sans-serif",size:11}}}
+    }
+  }
+});
+
+// === Accordion ===
+var touchStartY=0,touchStartX=0,touchStartTime=0;
+function toggleAccordion(sec){
+  if(!sec)return;
+  var isCollapsed=sec.classList.contains('collapsed');
+  if(isCollapsed){
+    sec.classList.remove('collapsed');
+    sec.classList.add('collapsing');
+    var body=sec.querySelector('.section-body');
+    var onEnd=function(){sec.classList.remove('collapsing');body.removeEventListener('transitionend',onEnd)};
+    body.addEventListener('transitionend',onEnd);
+    setTimeout(function(){sec.classList.remove('collapsing')},400);
+  }else{
+    sec.classList.add('collapsing','collapsed');
+    var body2=sec.querySelector('.section-body');
+    var onEnd2=function(){sec.classList.remove('collapsing');body2.removeEventListener('transitionend',onEnd2)};
+    body2.addEventListener('transitionend',onEnd2);
+    setTimeout(function(){sec.classList.remove('collapsing')},400);
+  }
+}
+
+document.querySelectorAll('[data-accordion] .section-title').forEach(function(title){
+  title.addEventListener('touchstart',function(e){
+    touchStartY=e.touches[0].clientY;
+    touchStartX=e.touches[0].clientX;
+    touchStartTime=Date.now();
+  },{passive:true});
+  title.addEventListener('touchend',function(e){
+    var dy=Math.abs(e.changedTouches[0].clientY-touchStartY);
+    var dx=Math.abs(e.changedTouches[0].clientX-touchStartX);
+    var dt=Date.now()-touchStartTime;
+    if(dy<10&&dx<10&&dt<300){
+      e.preventDefault();
+      toggleAccordion(this.closest('[data-accordion]'));
+    }
+  });
+  title.addEventListener('click',function(e){
+    if(e.sourceCapabilities&&e.sourceCapabilities.firesTouchEvents)return;
+    if(window.matchMedia('(pointer:fine)').matches){
+      toggleAccordion(this.closest('[data-accordion]'));
+    }
+  });
+});
+
+(function(){
+  if(window.innerWidth<=768){
+    document.querySelectorAll('[data-accordion]').forEach(function(sec){
+      sec.classList.add('collapsed');
+    });
+  }
+})();
+
+// === TOC ===
+function toggleToc(){
+  var menu=document.getElementById('tocMenu');
+  var btn=document.getElementById('tocToggle');
+  menu.classList.toggle('open');
+  btn.classList.toggle('open');
+  btn.textContent=menu.classList.contains('open')?'✕ セクション':'☰';
+}
+function tocJump(id){
+  var sec=document.getElementById(id);
+  if(sec){
+    sec.classList.remove('collapsed');
+    toggleToc();
+    setTimeout(function(){sec.scrollIntoView({behavior:'smooth',block:'start'})},100);
+  }
+}
+function toggleAllSections(expand){
+  document.querySelectorAll('[data-accordion]').forEach(function(sec){
+    if(expand)sec.classList.remove('collapsed');
+    else sec.classList.add('collapsed');
+  });
+}
+</script>
+</body>
+</html>
