@@ -1,0 +1,751 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Applied Digital FY2026 Q3 決算分析</title>
+<link rel="icon" type="image/png" href="../favicon.png">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700;900&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<style>
+:root{
+  --bg:#0d1117;--card:#161b22;--border:#21262d;--border2:#30363d;
+  --text:#e6edf3;--text-sub:#8b949e;
+  --gold:#B8912A;--gold-light:#D4A843;--navy:#1A2540;--paper:#F5F2EC;
+  --green:#2ea043;--red:#f85149;--blue:#58a6ff;--purple:#bc8cff;--orange:#d29922;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Inter','Noto Sans JP',sans-serif;background:var(--bg);color:var(--text);padding:20px;line-height:1.7}
+.container{max-width:1200px;margin:0 auto}
+h1,h2,h3,.section-title{font-family:'Inter',sans-serif;font-weight:700;letter-spacing:-.01em}
+
+/* Header */
+.header{background:linear-gradient(135deg,#1a2332 0%,#1A2540 50%,#0F1829 100%);border-bottom:1px solid rgba(184,145,42,0.15);padding:40px 20px 30px;text-align:center;position:relative;overflow:hidden}
+.header::before{content:'';position:absolute;top:0;left:0;right:0;bottom:0;background:radial-gradient(ellipse at 30% 50%,rgba(184,145,42,0.08) 0%,transparent 60%),radial-gradient(ellipse at 70% 50%,rgba(184,145,42,0.06) 0%,transparent 60%)}
+.header-content{position:relative;z-index:1}
+.header h1{font-size:2.2em;font-weight:900;margin-bottom:4px;letter-spacing:-.02em}
+.header .subtitle{color:var(--text-sub);font-size:1.1em}
+.header .date{color:var(--text-sub);font-size:0.85em;margin-top:8px}
+.header-logo-row{display:flex;align-items:center;justify-content:center;gap:16px;margin-bottom:8px}
+.ticker-badge{display:inline-block;background:rgba(184,145,42,0.15);border:1px solid rgba(184,145,42,0.3);border-radius:8px;padding:6px 16px;font-size:14px;color:var(--gold);margin-bottom:12px;letter-spacing:1px;font-family:'Inter',sans-serif;font-weight:600}
+
+/* Score */
+.score-section{text-align:center;padding:40px 20px;background:var(--card);border:1px solid var(--border);border-radius:16px;margin:24px 0}
+.score-big{font-size:5em;font-weight:900;line-height:1;font-family:'Inter',sans-serif;letter-spacing:-.02em}
+.score-label{font-size:1.5em;font-weight:700;margin-top:8px;font-family:'Inter',sans-serif}
+.score-reason{color:var(--text-sub);margin-top:12px;max-width:850px;margin-left:auto;margin-right:auto;font-size:0.95em;line-height:1.85;font-family:'Noto Sans JP',sans-serif}
+
+/* Section */
+.section{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:28px 24px;margin-bottom:20px;position:relative}
+.section-title{font-size:1.2em;font-weight:700;margin-bottom:20px;display:flex;align-items:center;gap:8px}
+.section-icon{font-size:1.1em}
+
+/* Grid */
+.metrics-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:20px}
+.metric-card{background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:12px;padding:16px;text-align:center}
+.metric-label{font-size:0.78em;color:var(--text-sub);margin-bottom:6px;font-family:'Noto Sans JP',sans-serif}
+.metric-value{font-size:1.5em;font-weight:800;font-family:'Inter',sans-serif;letter-spacing:-.01em;color:var(--text)}
+.metric-sub{font-size:0.75em;color:var(--text-sub);margin-top:4px;font-family:'Inter',sans-serif}
+.metric-beat{color:var(--green)}
+.metric-miss{color:var(--red)}
+
+/* Chart */
+.chart-container{position:relative;height:340px;margin:16px 0}
+.chart-row{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+
+/* Table */
+.tbl{width:100%;border-collapse:collapse;font-size:0.88em}
+.tbl th{background:rgba(255,255,255,0.04);padding:10px 12px;text-align:left;border-bottom:1px solid var(--border2);font-weight:500;color:var(--text-sub);white-space:nowrap;font-family:'Noto Sans JP',sans-serif}
+.tbl td{padding:10px 12px;border-bottom:1px solid var(--border);white-space:nowrap;font-family:'Inter',sans-serif}
+.tbl .pos{color:var(--green)}
+.tbl .neg{color:var(--red)}
+
+/* Two-col */
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+
+/* Valuation cards */
+.val-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.val-card{border-radius:14px;padding:24px;text-align:center;border:1px solid var(--border)}
+.val-card.low{background:linear-gradient(135deg,rgba(46,160,67,0.1),rgba(46,160,67,0.03));border-color:rgba(46,160,67,0.3)}
+.val-card.mid{background:linear-gradient(135deg,rgba(88,166,255,0.1),rgba(88,166,255,0.03));border-color:rgba(88,166,255,0.3)}
+.val-card.high{background:linear-gradient(135deg,rgba(188,140,255,0.1),rgba(188,140,255,0.03));border-color:rgba(188,140,255,0.3)}
+.val-card h3{font-size:0.9em;font-weight:600;color:var(--text-sub);margin-bottom:8px;font-family:'Noto Sans JP',sans-serif}
+.val-card .val-price{font-size:2.2em;font-weight:900;font-family:'Inter',sans-serif;letter-spacing:-.02em}
+.val-card.low .val-price{color:var(--green)}
+.val-card.mid .val-price{color:var(--blue)}
+.val-card.high .val-price{color:var(--purple)}
+.val-card .val-detail{font-size:0.8em;color:var(--text-sub);margin-top:8px;line-height:1.6;font-family:'Noto Sans JP',sans-serif}
+.val-verdict{text-align:center;margin-top:20px;padding:16px;background:rgba(184,145,42,0.08);border:1px solid rgba(184,145,42,0.2);border-radius:12px;font-size:1.05em}
+
+/* Risk/Catalyst */
+.rc-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.rc-list{list-style:none;padding:0}
+.rc-list li{padding:8px 0;border-bottom:1px solid var(--border);font-size:0.9em;line-height:1.7}
+.rc-list li:last-child{border-bottom:none}
+.rc-list li::before{margin-right:8px}
+.risk-list li::before{content:'⚠';color:var(--red)}
+.catalyst-list li::before{content:'✦';color:var(--green)}
+
+/* Overview grid */
+.overview-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.overview-item{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);font-size:0.9em}
+.overview-item .ov-label{color:var(--text-sub);font-family:'Noto Sans JP',sans-serif}
+
+/* Tech grid */
+.tech-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:16px}
+.tech-card{background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:10px;padding:14px;text-align:center}
+.tech-card .tc-label{font-size:0.75em;color:var(--text-sub);font-family:'Noto Sans JP',sans-serif}
+.tech-card .tc-value{font-size:1.2em;font-weight:800;margin-top:4px;font-family:'Inter',sans-serif;letter-spacing:-.01em}
+.tech-badge{display:inline-block;padding:4px 12px;border-radius:6px;font-size:0.85em;font-weight:600}
+.tech-badge.bullish{background:rgba(46,160,67,0.15);color:var(--green);border:1px solid rgba(46,160,67,0.3)}
+.tech-badge.neutral{background:rgba(210,153,34,0.15);color:var(--orange);border:1px solid rgba(210,153,34,0.3)}
+.tech-badge.bearish{background:rgba(248,81,73,0.15);color:var(--red);border:1px solid rgba(248,81,73,0.3)}
+
+/* Comment */
+.comment-block{background:rgba(255,255,255,0.02);border-left:3px solid var(--gold);padding:16px 20px;border-radius:0 10px 10px 0;margin-bottom:14px}
+.comment-block .cb-name{font-weight:700;font-size:0.9em;color:var(--gold-light);margin-bottom:6px;font-family:'Inter',sans-serif}
+.comment-block .cb-text{font-size:0.88em;color:var(--text-sub);line-height:1.85;font-family:'Noto Sans JP',sans-serif}
+
+/* TradingView */
+.tradingview-widget-container{max-width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch;margin:16px auto;display:flex;justify-content:center}
+
+/* === Mobile Responsive === */
+@media(max-width:768px){
+  body{padding:12px!important}
+  .container{padding:12px}
+  .header{padding:28px 16px}
+  .header h1{font-size:1.4rem}
+  .header .subtitle{font-size:.95em}
+  .header-logo-row{flex-direction:column;gap:8px}
+  .ticker-badge{font-size:12px;padding:4px 12px}
+  .grid,.metrics-grid{grid-template-columns:1fr 1fr}
+  .val-grid,.val-cards,.risk-grid{grid-template-columns:1fr}
+  .chart-wrap,.chart-container{height:250px}
+  .section{padding:20px 16px}
+  .two-col{grid-template-columns:1fr}
+  .rc-grid{grid-template-columns:1fr}
+  .metrics-grid{grid-template-columns:1fr 1fr!important}
+  .chart-row{grid-template-columns:1fr!important}
+  .overview-grid{grid-template-columns:1fr!important}
+  .tech-grid{grid-template-columns:1fr!important}
+  table{display:block;overflow-x:auto;-webkit-overflow-scrolling:touch}
+  .compare-table,.tech-table,.tbl{font-size:.78rem}
+  .portal-link{padding:6px 10px;font-size:.7rem}
+}
+@media(max-width:480px){
+  .grid,.metrics-grid{grid-template-columns:1fr!important}
+  .chart-row,.overview-grid,.tech-grid{grid-template-columns:1fr!important}
+  .header h1{font-size:1.2rem}
+  .score-big{font-size:3.5em}
+  .score-label{font-size:1.2em}
+  .section-title,.section-header{font-size:1rem}
+}
+
+/* === Accordion (mobile only) === */
+.section[data-accordion]{position:relative}
+.section[data-accordion] .section-title{cursor:pointer;user-select:none;padding-right:36px}
+.section[data-accordion] .section-title::after{content:'▼';position:absolute;right:20px;top:28px;font-size:.7em;color:var(--text-sub);transition:transform .25s}
+.section[data-accordion].collapsed .section-title::after{transform:rotate(-90deg)}
+.section[data-accordion] .section-body{overflow:visible;transition:max-height .35s ease,opacity .25s ease;max-height:6000px;opacity:1}
+.section[data-accordion].collapsing .section-body{overflow:hidden}
+.section[data-accordion].collapsed .section-body{max-height:0;overflow:hidden;opacity:0;margin:0;padding:0}
+
+/* === TOC Nav (mobile only) === */
+.toc-nav{display:none}
+@media(max-width:768px){
+  .toc-nav{display:block;position:fixed;bottom:0;left:0;right:0;z-index:998;background:#1A2540;border-top:1px solid rgba(184,145,42,0.15);box-shadow:0 -2px 12px rgba(0,0,0,.3)}
+  .toc-toggle{position:fixed;bottom:16px;right:16px;z-index:999;width:48px;height:48px;border-radius:50%;background:#B8912A;color:#0F1829;border:none;font-size:1.2rem;cursor:pointer;box-shadow:0 2px 12px rgba(0,0,0,.4);display:flex;align-items:center;justify-content:center;transition:all .2s}
+  .toc-toggle.open{border-radius:12px 12px 0 0;bottom:0;right:0;left:0;width:100%;height:44px;font-size:.9rem}
+  .toc-menu{max-height:0;overflow:hidden;transition:max-height .3s ease}
+  .toc-menu.open{max-height:60vh;overflow-y:auto;-webkit-overflow-scrolling:touch}
+  .toc-list{list-style:none;padding:8px 0;margin:0}
+  .toc-list li{border-bottom:1px solid #21262d}
+  .toc-list li:last-child{border-bottom:none}
+  .toc-list a{display:flex;align-items:center;gap:10px;padding:12px 20px;color:#e6edf3;text-decoration:none;font-size:.85rem;transition:background .15s}
+  .toc-list a:hover,.toc-list a:active{background:rgba(88,166,255,.1)}
+  .toc-list .toc-icon{font-size:1.1em;flex-shrink:0;width:24px;text-align:center}
+  .toc-list .toc-label{flex:1}
+  .toc-expand-all{display:flex;justify-content:center;gap:12px;padding:10px 16px;border-bottom:1px solid #21262d}
+  .toc-expand-all button{font-family:'Noto Sans JP',sans-serif;font-size:.75rem;padding:4px 14px;border-radius:6px;border:1px solid #30363d;background:transparent;color:#8b949e;cursor:pointer}
+  .toc-expand-all button:active{background:#B8912A;color:#0F1829}
+  body{padding-bottom:60px!important}
+}
+</style>
+</head>
+<body>
+<div class="container">
+
+<!-- Header -->
+<div class="header">
+  <div class="header-content">
+    <div class="header-logo-row">
+      <div class="ticker-badge">NASDAQ: APLD</div>
+    </div>
+    <h1>Applied Digital 決算分析</h1>
+    <div class="subtitle">FY2026 Q3（2025年12月1日〜2026年2月28日）</div>
+    <div class="date">発表日: 2026年4月8日 ｜ レポート作成: 2026年4月9日</div>
+  </div>
+</div>
+
+<!-- 1. Score -->
+<div class="score-section">
+  <div class="score-big">5 <span style="font-size:0.6em">🚀</span></div>
+  <div class="score-label">素晴らしい決算</div>
+  <div class="score-reason">売上 $126.6M（YoY +139%）はコンセンサス $76.56M を65%上回る圧倒的ビート。Polaris Forge 1（100MW HPCデータセンター）が初の通年寄与し、HPCホスティング売上 $71.0M（基本賃料$44.1M+テナントFit-out $18.9M+電力パススルー$8.1M）を計上。調整後EBITDA $44.1M、調整後純利益 $33.2M（調整後EPS $0.09）で初の本格黒字を達成。GAAP EPSは($0.36)で予想($0.16)を下回るが、これはCloud事業のhold-for-saleからの組替に伴う$59.7Mの非現金減損が主因。CoreWeaveは$11Bの契約バックログを保有し、ELN-02/03リースをSPV構造化＋親会社保証＋$50M信用状でA3投資適格格付けを取得（BBから格上げ）。第二ハイパースケーラー$5B契約と合わせ計$16Bのバックログ。$2.15B シニア担保社債発行完了、$100M DevCo facility獲得、Macquarie系Aquariaから$4.1Bの優先株Take-out可能。Delta Forge 1（430MW、テキサス南部）着工、Polaris Forge 2の追加150MW×2棟建設中。決算後株価はレギュラー +10.37%、AHでさらに +12.68% と急騰。AI HPC需要の「明確な加速」を経営陣自認。</div>
+</div>
+
+<!-- 2. Key Metrics -->
+<div class="metrics-grid">
+  <div class="metric-card">
+    <div class="metric-label">売上高</div>
+    <div class="metric-value">$126.6M</div>
+    <div class="metric-sub metric-beat">YoY +139% | ビート +65.4%</div>
+  </div>
+  <div class="metric-card">
+    <div class="metric-label">調整後EPS</div>
+    <div class="metric-value metric-beat">$0.09</div>
+    <div class="metric-sub metric-beat">初の本格黒字転換</div>
+  </div>
+  <div class="metric-card">
+    <div class="metric-label">調整後EBITDA</div>
+    <div class="metric-value">$44.1M</div>
+    <div class="metric-sub">マージン 34.8%</div>
+  </div>
+  <div class="metric-card">
+    <div class="metric-label">GAAP EPS</div>
+    <div class="metric-value metric-miss">($0.36)</div>
+    <div class="metric-sub metric-miss">Cloud再分類$59.7M減損含む</div>
+  </div>
+  <div class="metric-card">
+    <div class="metric-label">HPCホスティング売上</div>
+    <div class="metric-value">$71.0M</div>
+    <div class="metric-sub metric-beat">Polaris Forge 1 寄与</div>
+  </div>
+  <div class="metric-card">
+    <div class="metric-label">契約バックログ</div>
+    <div class="metric-value" style="color:var(--gold-light)">$16B</div>
+    <div class="metric-sub">CoreWeave $11B + 第2 $5B</div>
+  </div>
+  <div class="metric-card">
+    <div class="metric-label">時価総額</div>
+    <div class="metric-value">$7.0B</div>
+    <div class="metric-sub">配当なし</div>
+  </div>
+  <div class="metric-card">
+    <div class="metric-label">株価（4/8）</div>
+    <div class="metric-value" style="color:var(--green)">$28.93</div>
+    <div class="metric-sub metric-beat">レギュラー +10.4% / AH +12.7%</div>
+  </div>
+</div>
+
+<!-- 3. Revenue / EPS Chart -->
+<div class="section" id="sec-revenue" data-accordion>
+  <div class="section-title"><span class="section-icon">📊</span> 売上高 / EPS 7四半期推移</div>
+  <div class="section-body">
+    <div class="chart-row">
+      <div><div class="chart-container"><canvas id="revenueChart"></canvas></div></div>
+      <div><div class="chart-container"><canvas id="epsChart"></canvas></div></div>
+    </div>
+    <div style="margin-top:12px;padding:10px 14px;background:rgba(184,145,42,0.06);border:1px solid rgba(184,145,42,0.18);border-radius:10px;font-size:0.82em;color:var(--text-sub);font-family:'Noto Sans JP',sans-serif">
+      ※ FY26Q3で売上が$126.6Mに急増し、Polaris Forge 1（100MW HPCデータセンター）の通年寄与によって構造的なステップアップを実現。調整後EPSも初の本格黒字に転換。
+    </div>
+  </div>
+</div>
+
+<!-- 4. Margin / Profitability -->
+<div class="section" id="sec-margin" data-accordion>
+  <div class="section-title"><span class="section-icon">📈</span> 利益率・採算性</div>
+  <div class="section-body">
+    <table class="tbl">
+      <thead><tr><th>指標</th><th>Q3 FY26</th><th>Q3 FY25</th><th>YoY変化</th></tr></thead>
+      <tbody>
+        <tr><td>売上高</td><td>$126.6M</td><td>$52.9M</td><td class="pos">+139%</td></tr>
+        <tr><td>HPCホスティング売上</td><td>$71.0M</td><td>—</td><td class="pos">新セグメント本格寄与</td></tr>
+        <tr><td>HPCホスティング営業利益</td><td>$17.6M</td><td>—</td><td class="pos">セグメント営業利益率 24.8%</td></tr>
+        <tr><td>調整後EBITDA</td><td>$44.1M</td><td>赤字</td><td class="pos">EBITDAマージン 34.8%</td></tr>
+        <tr><td>調整後純利益</td><td>$33.2M</td><td>赤字</td><td class="pos">初の調整後黒字</td></tr>
+        <tr><td>GAAP純損失</td><td>($100.9M)</td><td>($43M)</td><td class="neg">悪化（一時減損$59.7M含む）</td></tr>
+        <tr><td>SG&amp;A</td><td>$79.7M</td><td>約$22M</td><td class="neg">+260% (SBC $39.3M含む)</td></tr>
+      </tbody>
+    </table>
+    <div style="margin-top:16px;padding:12px 16px;background:rgba(46,160,67,0.08);border:1px solid rgba(46,160,67,0.2);border-radius:10px;font-size:0.88em;color:var(--text-sub);font-family:'Noto Sans JP',sans-serif">
+      <strong>採算性所見</strong>: HPCホスティング事業は単体で営業利益率24.8%、調整後EBITDAマージン34.8%と高採算。GAAP損失は主にCloud事業の保有目的変更（held-for-sale → 継続事業に再分類）に伴う$59.7M非現金減損と、SBCを中心とするSG&amp;A急増（$39.3M）が要因。コア事業の経済性は極めて健全。
+    </div>
+  </div>
+</div>
+
+<!-- 5. Consensus -->
+<div class="section" id="sec-consensus" data-accordion>
+  <div class="section-title"><span class="section-icon">🎯</span> コンセンサス比較</div>
+  <div class="section-body">
+    <div class="two-col">
+      <div>
+        <h4 style="font-size:0.95em;margin-bottom:12px;color:var(--text-sub);font-family:'Noto Sans JP',sans-serif">Q3 FY26 実績 vs コンセンサス</h4>
+        <table class="tbl">
+          <thead><tr><th>指標</th><th>実績</th><th>コンセンサス</th><th>差分</th></tr></thead>
+          <tbody>
+            <tr><td>売上</td><td>$126.6M</td><td>$76.56M</td><td class="pos">+$50.0M (+65.4%)</td></tr>
+            <tr><td>調整後EPS</td><td>$0.09</td><td>—</td><td class="pos">予想を大幅上振れ</td></tr>
+            <tr><td>GAAP EPS</td><td>($0.36)</td><td>($0.16)</td><td class="neg">$59.7M減損が要因</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div>
+        <h4 style="font-size:0.95em;margin-bottom:12px;color:var(--text-sub);font-family:'Noto Sans JP',sans-serif">Q4 FY26 ガイダンス</h4>
+        <table class="tbl">
+          <thead><tr><th>項目</th><th>方針</th></tr></thead>
+          <tbody>
+            <tr><td>正式ガイダンス</td><td class="neg">非開示</td></tr>
+            <tr><td>長期目標</td><td class="pos">5年以内にNOI $1B</td></tr>
+            <tr><td>NOIマイルストーン</td><td class="pos">$1B / $2B 内部目標設定</td></tr>
+            <tr><td>容量計画</td><td class="pos">2028年までに約900MW建設中</td></tr>
+            <tr><td>パイプライン</td><td class="pos">追加4サイト ~1GW グリッド電力</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div style="margin-top:14px;padding:12px 16px;background:rgba(184,145,42,0.06);border:1px solid rgba(184,145,42,0.18);border-radius:10px;font-size:0.88em;color:var(--text-sub);font-family:'Noto Sans JP',sans-serif">
+      経営陣は規律あるリース執行と資産品質を優先し、四半期ベースの正式ガイダンスは非開示。代わりに「5年以内にNOI $1B、その後 $2B」という長期目標を内部アカウンタビリティとして設定。
+    </div>
+  </div>
+</div>
+
+<!-- 6. Cashflow / Balance Sheet -->
+<div class="section" id="sec-cashflow" data-accordion>
+  <div class="section-title"><span class="section-icon">💰</span> キャッシュフロー / 資金調達</div>
+  <div class="section-body">
+    <table class="tbl">
+      <thead><tr><th>項目</th><th>Q3 FY26 / 直近</th><th>備考</th></tr></thead>
+      <tbody>
+        <tr><td>現金</td><td>$2.1B</td><td>強固な流動性</td></tr>
+        <tr><td>有利子負債</td><td>$2.7B</td><td>2年間の主要償還なし</td></tr>
+        <tr><td>純有利子負債</td><td>$0.6B</td><td>—</td></tr>
+        <tr><td>シニア担保社債発行</td><td class="pos">$2.15B 完了</td><td>Polaris Forge 2 拡張資金</td></tr>
+        <tr><td>DevCo facility</td><td class="pos">$100M 獲得</td><td>—</td></tr>
+        <tr><td>Aquaria（Macquarie系）優先株</td><td class="pos">$4.1B 利用可能</td><td>投資適格リース執行後にtake-out</td></tr>
+        <tr><td>調達コスト改善余地</td><td class="pos">BB系350-450bps → A系&lt;300bps</td><td>ABS化で大幅低減見込み</td></tr>
+        <tr><td>Base Electron Power</td><td>1.2GW 天然ガス発電（ダコタ州）</td><td>APLD ~10%出資、限定的信用支援</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- 7. Segment / Customer -->
+<div class="section" id="sec-segment" data-accordion>
+  <div class="section-title"><span class="section-icon">🏢</span> 事業セグメント・顧客契約</div>
+  <div class="section-body">
+    <table class="tbl">
+      <thead><tr><th>セグメント / 顧客</th><th>金額・規模</th><th>備考</th></tr></thead>
+      <tbody>
+        <tr><td><strong>HPCホスティング</strong></td><td>$71.0M（Q3売上の56%）</td><td>営業利益$17.6M、利益率24.8%</td></tr>
+        <tr><td>　└ 基本賃料</td><td>$44.1M</td><td>長期固定収入</td></tr>
+        <tr><td>　└ Fit-out 売上</td><td>$18.9M</td><td>テナント特注設備</td></tr>
+        <tr><td>　└ 電力パススルー他</td><td>$8.1M</td><td>—</td></tr>
+        <tr><td><strong>Cloud Services</strong></td><td>$18.1M（四半期）</td><td class="neg">Exo Bionic と統合 → Chronos Scale 分離計画</td></tr>
+        <tr><td><strong>Data Center Hosting（旧来）</strong></td><td>残余</td><td>従来型ブロックチェーン顧客</td></tr>
+        <tr><td><strong>CoreWeave契約（主顧客）</strong></td><td class="pos">$11B 契約バックログ</td><td>ELN-02/03 SPV化、A3格付け、$50M信用状</td></tr>
+        <tr><td><strong>第2ハイパースケーラー</strong></td><td class="pos">$5B 契約</td><td>投資適格テナント比率70%目標</td></tr>
+        <tr><td><strong>3サイト独占交渉</strong></td><td class="pos">~900MW</td><td>年内のリース署名見込み</td></tr>
+      </tbody>
+    </table>
+    <div style="margin-top:14px;padding:12px 16px;background:rgba(46,160,67,0.08);border:1px solid rgba(46,160,67,0.2);border-radius:10px;font-size:0.88em;color:var(--text-sub);font-family:'Noto Sans JP',sans-serif">
+      <strong>契約バックログ合計 $16B</strong>: 投資適格テナントに集中しつつ、特定顧客への過度な依存を避けるため、追加リースは新規ハイパースケーラー獲得を優先する方針。
+    </div>
+  </div>
+</div>
+
+<!-- 8. Facilities -->
+<div class="section" id="sec-geo" data-accordion>
+  <div class="section-title"><span class="section-icon">🏗️</span> データセンター・施設パイプライン</div>
+  <div class="section-body">
+    <table class="tbl">
+      <thead><tr><th>施設</th><th>容量</th><th>状態 / タイミング</th></tr></thead>
+      <tbody>
+        <tr><td>Polaris Forge 1（PF1）—1棟目</td><td>100 MW</td><td class="pos">稼働中（Q2 FY26より）</td></tr>
+        <tr><td>Polaris Forge 1—2棟目</td><td>150 MW</td><td>建設中、CY2026稼働見込み</td></tr>
+        <tr><td>Polaris Forge 2 — 3棟目</td><td>150 MW</td><td>建設中、CY2027稼働見込み</td></tr>
+        <tr><td>Delta Forge 1（テキサス南部）</td><td class="pos">430 MW</td><td>着工済み（600+エーカー）、2027半ば稼働目標</td></tr>
+        <tr><td>追加4サイト</td><td>~1 GW グリッド電力</td><td>マーケティング中（北ダコタ + 2州未開示）</td></tr>
+        <tr><td>Base Electron Power（電源開発）</td><td>1.2 GW</td><td>天然ガス発電、ダコタ州、APLD ~10%出資</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- 9. Overview -->
+<div class="section" id="sec-overview" data-accordion>
+  <div class="section-title"><span class="section-icon">🏗️</span> 企業概要・外部環境</div>
+  <div class="section-body">
+    <div class="overview-grid">
+      <div>
+        <h4 style="color:var(--gold-light);margin-bottom:10px;font-family:'Noto Sans JP',sans-serif">企業プロフィール</h4>
+        <div class="overview-item"><span class="ov-label">本社</span><span>米テキサス州ダラス</span></div>
+        <div class="overview-item"><span class="ov-label">設立</span><span>2001年（旧Applied Blockchain）</span></div>
+        <div class="overview-item"><span class="ov-label">CEO</span><span>Wes Cummins</span></div>
+        <div class="overview-item"><span class="ov-label">事業領域</span><span>AI/HPCデータセンター開発・運営</span></div>
+        <div class="overview-item"><span class="ov-label">主要拠点</span><span>ノースダコタ州（PF1/PF2）、テキサス南部（DF1）</span></div>
+        <div class="overview-item"><span class="ov-label">差別化</span><span>100MW直接液冷却（Direct-to-chip）の希少性</span></div>
+        <div class="overview-item"><span class="ov-label">ティッカー</span><span>NASDAQ: APLD</span></div>
+      </div>
+      <div>
+        <h4 style="color:var(--gold-light);margin-bottom:10px;font-family:'Noto Sans JP',sans-serif">業界・マクロ環境</h4>
+        <div class="overview-item"><span class="ov-label">業界</span><span>AI/HPCインフラ（NeoCloud / Datacenter REIT類似）</span></div>
+        <div class="overview-item"><span class="ov-label">主要競合</span><span>CoreWeave, Nebius, Iren, CRWV関連企業</span></div>
+        <div class="overview-item"><span class="ov-label">追い風</span><span>AI推論/学習需要、ハイパースケーラーの容量逼迫</span></div>
+        <div class="overview-item"><span class="ov-label">逆風</span><span>電力グリッド制約、規制承認、金利</span></div>
+        <div class="overview-item"><span class="ov-label">技術トレンド</span><span>液冷却、Direct-to-chip、高密度ラック</span></div>
+        <div class="overview-item"><span class="ov-label">資金調達</span><span>プロジェクトファイナンス → ABS化で調達コスト低減</span></div>
+        <div class="overview-item"><span class="ov-label">主要パートナー</span><span>CoreWeave, Macquarie/Aquaria, NVIDIA エコシステム</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 10. Technical -->
+<div class="section" id="sec-technical" data-accordion>
+  <div class="section-title"><span class="section-icon">📉</span> テクニカル分析</div>
+  <div class="section-body">
+    <div class="tradingview-widget-container">
+      <div class="tradingview-widget-container__widget"></div>
+      <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js" async>
+      {
+        "autosize": false,
+        "width": 1100,
+        "height": 750,
+        "symbol": "NASDAQ:APLD",
+        "interval": "D",
+        "timezone": "Asia/Tokyo",
+        "theme": "dark",
+        "style": "1",
+        "locale": "ja",
+        "backgroundColor": "rgba(13, 17, 23, 1)",
+        "gridColor": "rgba(48, 54, 61, 0.3)",
+        "range": "6M",
+        "hide_top_toolbar": false,
+        "hide_legend": false,
+        "allow_symbol_change": false,
+        "save_image": true,
+        "calendar": false,
+        "hide_volume_indicator": false,
+        "withdateranges": true,
+        "support_host": "https://www.tradingview.com",
+        "studies": [
+          "MASimple@tv-basicstudies",
+          "MAExp@tv-basicstudies"
+        ],
+        "studies_overrides": {
+          "moving average.length": 50,
+          "moving average exponential.length": 200
+        }
+      }
+      </script>
+    </div>
+    <div class="tech-grid">
+      <div class="tech-card"><div class="tc-label">現在株価（4/8）</div><div class="tc-value">$28.93</div></div>
+      <div class="tech-card"><div class="tc-label">52週高値</div><div class="tc-value">$42.27</div></div>
+      <div class="tech-card"><div class="tc-label">52週安値</div><div class="tc-value">$3.31</div></div>
+      <div class="tech-card"><div class="tc-label">52週高値からの乖離</div><div class="tc-value" style="color:var(--orange)">-31.6%</div></div>
+      <div class="tech-card"><div class="tc-label">決算後反応（AH）</div><div class="tc-value" style="color:var(--green)">+12.7%</div></div>
+      <div class="tech-card"><div class="tc-label">52週安値比</div><div class="tc-value" style="color:var(--green)">+774%</div></div>
+    </div>
+    <div style="margin-top:18px;text-align:center">
+      <span class="tech-badge bullish">総合判定: 強気（短中長期）</span>
+    </div>
+    <div style="margin-top:14px;padding:12px 16px;background:rgba(46,160,67,0.06);border:1px solid rgba(46,160,67,0.2);border-radius:10px;font-size:0.88em;color:var(--text-sub);font-family:'Noto Sans JP',sans-serif">
+      <strong>テクニカル所見</strong>: 4/8の決算ビートでレギュラー +10.4%、AHでさらに +12.7% と急騰。$28台に再浮上し、52週高値$42.27までは+46%のアップサイド。1年で$3.31 → $42.27 → $28.93と高ボラティリティだが、強い上昇トレンド継続。50日線・200日線とも上向きでゴールデンクロス継続。次のレジスタンスは$32（直近の中間ピーク）→ $42.27（52w高値）。サポートは200日線推定$22前後。アナリスト目標中央値$44とは大きな乖離があり、強気シグナル多数。
+    </div>
+  </div>
+</div>
+
+<!-- 11. Management Comments -->
+<div class="section" id="sec-mgmt" data-accordion>
+  <div class="section-title"><span class="section-icon">💬</span> 経営陣コメント・カンファレンスコール</div>
+  <div class="section-body">
+    <div class="comment-block">
+      <div class="cb-name">Wes Cummins — CEO</div>
+      <div class="cb-text">「我々は大規模・高密度AIデータセンターへの需要急増を最も早く認識した企業の一つ。今や世界でも数少ない100MW直接チップ液冷却施設を運営しており、ハイパースケーラー・パートナーシップの実証点となっている。AIデータセンター需要の『明確な加速』が見えており、5年以内にNOI $1B、その後$2Bを達成する自信がある」</div>
+    </div>
+    <div class="comment-block">
+      <div class="cb-name">CoreWeave契約 — A3格付け取得</div>
+      <div class="cb-text">CoreWeave関連リース（ELN-02、ELN-03）をCoreWeave完全子会社のSPV経由に再構築し、無条件親会社保証および$50M信用状を付加することで、Moody's格付けがBBから A3 投資適格にアップグレード。これにより$2.15B シニア担保社債の発行に成功し、調達コストを段階的にA系&lt;300bpsへ低減する道筋ができた。投資適格テナント比率は70%を目標。</div>
+    </div>
+    <div class="comment-block">
+      <div class="cb-name">資金調達戦略</div>
+      <div class="cb-text">プロジェクトファイナンス（BB系350-450bps）からABS型ストラクチャーへの移行で借入コストを大幅圧縮。Aquaria（Macquarie系）から$4.1Bの優先株Take-out コミットメントを確保。電源確保のためBase Electron Powerと組成した1.2GW天然ガス発電をダコタ州で開発、APLDは~10%出資。</div>
+    </div>
+    <div class="comment-block">
+      <div class="cb-name">パイプライン</div>
+      <div class="cb-text">Polaris Forge 1/2 すべての建設は工期・予算通りに進捗。Delta Forge 1（430MW、テキサス南部600+エーカー）は2027年半ば稼働目標。約900MWで3サイト独占交渉中、年内のリース署名見込み。追加4サイト合計~1GW のグリッド電力をパイプライン化。Cloud事業は Exo Bionic と統合してChronos Scaleとして分離・独立資金調達予定。</div>
+    </div>
+  </div>
+</div>
+
+<!-- 12. Risk / Catalyst -->
+<div class="section" id="sec-risk" data-accordion>
+  <div class="section-title"><span class="section-icon">⚠️</span> リスク・カタリスト</div>
+  <div class="section-body">
+    <div class="rc-grid">
+      <div>
+        <h4 style="color:var(--red);margin-bottom:12px;font-family:'Noto Sans JP',sans-serif">リスク要因</h4>
+        <ul class="rc-list risk-list">
+          <li>顧客集中リスク — CoreWeave $11B + 第2 $5B で計$16B、2社で大半を占める</li>
+          <li>SBC含むSG&amp;A急増 — Q3 $79.7M（うちSBC $39.3M）、希薄化圧力</li>
+          <li>GAAP損失継続 — Cloud再分類$59.7M減損、市場参加者の評価分散</li>
+          <li>電力グリッド制約 — 規制承認、変電所設備、相互接続待ち</li>
+          <li>Chronos Scale分離リスク — Cloud事業の独立資本調達、執行リスク</li>
+          <li>金利環境 — 巨額capex計画、ABS化未完了部分の調達コスト変動</li>
+          <li>建設遅延 — Delta Forge 1（430MW）2027半ば目標、規模感大</li>
+          <li>株価ボラティリティ — 1年で$3.31 → $42.27と大変動、ボラ高い</li>
+        </ul>
+      </div>
+      <div>
+        <h4 style="color:var(--green);margin-bottom:12px;font-family:'Noto Sans JP',sans-serif">カタリスト</h4>
+        <ul class="rc-list catalyst-list">
+          <li>$16B契約バックログ — 5年以上の確定収入確保</li>
+          <li>A3投資適格取得 — 調達コスト大幅低減、ROE改善見込み</li>
+          <li>$4.1B Aquaria優先株 — Take-out可能、希薄化なしで資金確保</li>
+          <li>900MW独占交渉 — 年内リース署名で追加$10B規模見込み</li>
+          <li>HPC営業利益率24.8% — コア事業の高採算性証明</li>
+          <li>調整後EBITDA $44.1M（マージン34.8%） — 初の本格利益創出</li>
+          <li>Polaris Forge 2 — 150MW × 2棟が2026/2027稼働で売上倍々ゲーム</li>
+          <li>Delta Forge 1（430MW） — 単一最大案件、テキサスの電力アクセス</li>
+          <li>Chronos Scale分離 — Cloud事業のSpin-off成功で本業集中</li>
+          <li>AI推論需要の構造的拡大 — ハイパースケーラーの容量逼迫継続</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 13. Compare -->
+<div class="section" id="sec-compare" data-accordion>
+  <div class="section-title"><span class="section-icon">🔄</span> 前回決算（FY26Q2）との比較</div>
+  <div class="section-body">
+    <table class="tbl">
+      <thead><tr><th>項目</th><th>FY26Q2（前回）</th><th>FY26Q3（今回）</th><th>トレンド</th></tr></thead>
+      <tbody>
+        <tr><td>総合スコア</td><td>4 📈 良い決算（推定）</td><td>5 🚀 素晴らしい決算</td><td class="pos">↑ 改善</td></tr>
+        <tr><td>売上高</td><td>~$64M</td><td>$126.6M</td><td class="pos">↑ +98%（HPC本格寄与）</td></tr>
+        <tr><td>HPCホスティング</td><td>初期寄与</td><td>$71.0M（フル4半期）</td><td class="pos">↑ 構造変化</td></tr>
+        <tr><td>調整後EBITDA</td><td>赤字</td><td>$44.1M</td><td class="pos">↑ 黒字転換</td></tr>
+        <tr><td>調整後EPS</td><td>赤字</td><td>$0.09</td><td class="pos">↑ 初の黒字</td></tr>
+        <tr><td>契約バックログ</td><td>~$11B</td><td>$16B</td><td class="pos">↑ 第2契約追加</td></tr>
+        <tr><td>調達状況</td><td>準備中</td><td>$2.15B シニア社債完了</td><td class="pos">↑ 資金確保</td></tr>
+        <tr><td>株価反応</td><td>—</td><td>+10.4% / AH +12.7%</td><td class="pos">↑ 急騰</td></tr>
+      </tbody>
+    </table>
+    <div style="margin-top:14px;padding:12px 16px;background:rgba(46,160,67,0.06);border:1px solid rgba(46,160,67,0.2);border-radius:10px;font-size:0.88em;color:var(--text-sub);font-family:'Noto Sans JP',sans-serif">
+      <strong>変化の主因</strong>: Polaris Forge 1 の100MW HPCデータセンターが初の通年寄与し、売上が倍増。HPCホスティング事業の高利益率（営業利益率24.8%）が確認され、ビジネスモデルの収益性が証明された。投資適格格付け取得と$2.15B債発行により資金面の懸念も払拭。Chronos Scale 分離計画でCloud事業のノイズも整理見込み。
+    </div>
+  </div>
+</div>
+
+<!-- 14. Valuation -->
+<div class="section" id="sec-valuation" data-accordion>
+  <div class="section-title"><span class="section-icon">💎</span> バリュエーション（想定株価3シナリオ）</div>
+  <div class="section-body">
+    <div class="val-cards">
+      <div class="val-card low">
+        <h3>LOW（保守的）</h3>
+        <div class="val-price">$24</div>
+        <div class="val-detail">FY27 EBITDA $250M × EV/EBITDA 25x、希薄化考慮<br>追加リース獲得遅延・建設遅延シナリオ</div>
+      </div>
+      <div class="val-card mid">
+        <h3>MID（基本）</h3>
+        <div class="val-price">$44</div>
+        <div class="val-detail">FY27 EBITDA $400M × EV/EBITDA 35x<br>900MW独占リース署名、計画通り建設進捗</div>
+      </div>
+      <div class="val-card high">
+        <h3>HIGH（楽観的）</h3>
+        <div class="val-price">$60</div>
+        <div class="val-detail">FY28 EBITDA $700M × EV/EBITDA 40x<br>NOI $1Bへの早期到達、全パイプライン稼働</div>
+      </div>
+    </div>
+    <div class="val-verdict">
+      <strong>判定: やや割安</strong> ｜ 現在株価 $28.93 vs MID想定 $44 → 乖離率 +52%（やや割安）<br>
+      <span style="font-size:0.85em;color:var(--text-sub);font-family:'Noto Sans JP',sans-serif">アナリスト目標株価中央値 $44.00（範囲 $36–$58）。Strong Buy 73% / Buy 27% / Hold 0% / Sell 0%（11アナリスト）。直近の調達完了と契約バックログ拡大を受けてアナリスト目標は上昇トレンド。</span>
+    </div>
+    <div style="margin-top:14px;padding:12px 16px;background:rgba(248,81,73,0.06);border:1px solid rgba(248,81,73,0.18);border-radius:10px;font-size:0.82em;color:var(--text-sub);font-family:'Noto Sans JP',sans-serif">
+      ※ APLDは赤字フェーズからEBITDA黒字化への移行期にあり、PERでは評価困難。EV/EBITDA倍率は他のAIインフラ・データセンターREIT（Equinix、Digital Realty）の20-30倍とNeoCloud（CoreWeave等）の40倍を参考に設定。実現にはリース獲得・建設実行・電源確保のすべてが鍵。
+    </div>
+  </div>
+</div>
+
+</div><!-- /container -->
+
+<style>
+.portal-link{position:fixed;top:16px;left:16px;z-index:999;display:flex;align-items:center;gap:6px;padding:8px 14px;border-radius:8px;background:#1A2540;border:1px solid rgba(184,145,42,0.2);color:#D4A843;text-decoration:none;font-size:.78rem;font-weight:500;font-family:"Inter",sans-serif;transition:all .15s;box-shadow:0 2px 8px rgba(0,0,0,.15)}
+.portal-link:hover{background:#B8912A;color:#0F1829;border-color:#B8912A}
+.portal-link svg{flex-shrink:0}
+</style>
+<a class="portal-link" href="https://atlas-financials.jp/reports/">
+<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>ポータル</a>
+
+<!-- TOC Navigation (mobile) -->
+<nav class="toc-nav" id="tocNav">
+  <div class="toc-menu" id="tocMenu">
+    <div class="toc-expand-all">
+      <button onclick="toggleAllSections(true)">すべて展開</button>
+      <button onclick="toggleAllSections(false)">すべて折りたたむ</button>
+    </div>
+    <ul class="toc-list">
+      <li><a href="#sec-revenue" onclick="tocJump('sec-revenue')"><span class="toc-icon">📊</span><span class="toc-label">売上 / EPS 7四半期推移</span></a></li>
+      <li><a href="#sec-margin" onclick="tocJump('sec-margin')"><span class="toc-icon">📈</span><span class="toc-label">利益率・採算性</span></a></li>
+      <li><a href="#sec-consensus" onclick="tocJump('sec-consensus')"><span class="toc-icon">🎯</span><span class="toc-label">コンセンサス比較</span></a></li>
+      <li><a href="#sec-cashflow" onclick="tocJump('sec-cashflow')"><span class="toc-icon">💰</span><span class="toc-label">キャッシュフロー</span></a></li>
+      <li><a href="#sec-segment" onclick="tocJump('sec-segment')"><span class="toc-icon">🏢</span><span class="toc-label">事業セグメント・顧客</span></a></li>
+      <li><a href="#sec-geo" onclick="tocJump('sec-geo')"><span class="toc-icon">🏗️</span><span class="toc-label">施設パイプライン</span></a></li>
+      <li><a href="#sec-overview" onclick="tocJump('sec-overview')"><span class="toc-icon">🏗️</span><span class="toc-label">企業概要</span></a></li>
+      <li><a href="#sec-technical" onclick="tocJump('sec-technical')"><span class="toc-icon">📉</span><span class="toc-label">テクニカル分析</span></a></li>
+      <li><a href="#sec-mgmt" onclick="tocJump('sec-mgmt')"><span class="toc-icon">💬</span><span class="toc-label">経営陣コメント</span></a></li>
+      <li><a href="#sec-risk" onclick="tocJump('sec-risk')"><span class="toc-icon">⚠️</span><span class="toc-label">リスク・カタリスト</span></a></li>
+      <li><a href="#sec-compare" onclick="tocJump('sec-compare')"><span class="toc-icon">🔄</span><span class="toc-label">前回決算比較</span></a></li>
+      <li><a href="#sec-valuation" onclick="tocJump('sec-valuation')"><span class="toc-icon">💎</span><span class="toc-label">バリュエーション</span></a></li>
+    </ul>
+  </div>
+</nav>
+<button class="toc-toggle" id="tocToggle" onclick="toggleToc()">☰</button>
+
+<script>
+// === Chart.js ===
+var quarters = ["Q1'25","Q2'25","Q3'25","Q4'25","Q1'26","Q2'26","Q3'26"];
+var revData = [60.7,63.9,52.9,64.0,73.4,152.5,126.6];
+var epsData = [-0.18,-0.16,-0.21,-0.24,-0.30,-0.45,-0.36];
+
+Chart.defaults.color = '#8b949e';
+Chart.defaults.borderColor = 'rgba(48,54,61,0.5)';
+Chart.defaults.font.family = "'Inter','Noto Sans JP',sans-serif";
+
+new Chart(document.getElementById('revenueChart'),{
+  type:'bar',
+  data:{
+    labels:quarters,
+    datasets:[{
+      label:'売上高 ($M)',
+      data:revData,
+      backgroundColor:revData.map(function(v,i){return i===revData.length-1?'rgba(184,145,42,0.85)':'rgba(184,145,42,0.35)'}),
+      borderColor:'rgba(184,145,42,1)',
+      borderWidth:1,
+      borderRadius:4
+    }]
+  },
+  options:{
+    responsive:true,
+    maintainAspectRatio:false,
+    plugins:{
+      title:{display:true,text:'売上高推移（7四半期）',font:{size:14,weight:'bold'},color:'#e6edf3'},
+      legend:{display:false},
+      tooltip:{callbacks:{label:function(ctx){return '$'+ctx.parsed.y.toFixed(1)+'M'}}}
+    },
+    scales:{
+      y:{beginAtZero:true,ticks:{callback:function(v){return '$'+v+'M'}},grid:{color:'rgba(48,54,61,0.3)'}},
+      x:{grid:{display:false},ticks:{font:{size:11}}}
+    }
+  }
+});
+
+new Chart(document.getElementById('epsChart'),{
+  type:'bar',
+  data:{
+    labels:quarters,
+    datasets:[{
+      label:'GAAP EPS ($)',
+      data:epsData,
+      backgroundColor:epsData.map(function(v,i){return i===epsData.length-1?'rgba(248,81,73,0.85)':'rgba(248,81,73,0.35)'}),
+      borderColor:'rgba(248,81,73,1)',
+      borderWidth:1,
+      borderRadius:4
+    }]
+  },
+  options:{
+    responsive:true,
+    maintainAspectRatio:false,
+    plugins:{
+      title:{display:true,text:'GAAP EPS推移（7四半期）※調整後はQ3で$0.09に黒字転換',font:{size:13,weight:'bold'},color:'#e6edf3'},
+      legend:{display:false},
+      tooltip:{callbacks:{label:function(ctx){return '$'+ctx.parsed.y.toFixed(2)}}}
+    },
+    scales:{
+      y:{beginAtZero:false,ticks:{callback:function(v){return '$'+v.toFixed(2)}},grid:{color:'rgba(48,54,61,0.3)'}},
+      x:{grid:{display:false},ticks:{font:{size:11}}}
+    }
+  }
+});
+
+// === Accordion ===
+var touchStartY=0,touchStartX=0,touchStartTime=0;
+function toggleAccordion(sec){
+  if(!sec)return;
+  var isCollapsed=sec.classList.contains('collapsed');
+  if(isCollapsed){
+    sec.classList.remove('collapsed');
+    sec.classList.add('collapsing');
+    var body=sec.querySelector('.section-body');
+    var onEnd=function(){sec.classList.remove('collapsing');body.removeEventListener('transitionend',onEnd)};
+    body.addEventListener('transitionend',onEnd);
+    setTimeout(function(){sec.classList.remove('collapsing')},400);
+  }else{
+    sec.classList.add('collapsing','collapsed');
+    var body2=sec.querySelector('.section-body');
+    var onEnd2=function(){sec.classList.remove('collapsing');body2.removeEventListener('transitionend',onEnd2)};
+    body2.addEventListener('transitionend',onEnd2);
+    setTimeout(function(){sec.classList.remove('collapsing')},400);
+  }
+}
+
+document.querySelectorAll('[data-accordion] .section-title').forEach(function(title){
+  title.addEventListener('touchstart',function(e){
+    touchStartY=e.touches[0].clientY;
+    touchStartX=e.touches[0].clientX;
+    touchStartTime=Date.now();
+  },{passive:true});
+  title.addEventListener('touchend',function(e){
+    var dy=Math.abs(e.changedTouches[0].clientY-touchStartY);
+    var dx=Math.abs(e.changedTouches[0].clientX-touchStartX);
+    var dt=Date.now()-touchStartTime;
+    if(dy<10&&dx<10&&dt<300){
+      e.preventDefault();
+      toggleAccordion(this.closest('[data-accordion]'));
+    }
+  });
+  title.addEventListener('click',function(e){
+    if(e.sourceCapabilities&&e.sourceCapabilities.firesTouchEvents)return;
+    if(window.matchMedia('(pointer:fine)').matches){
+      toggleAccordion(this.closest('[data-accordion]'));
+    }
+  });
+});
+
+(function(){
+  if(window.innerWidth<=768){
+    document.querySelectorAll('[data-accordion]').forEach(function(sec){
+      sec.classList.add('collapsed');
+    });
+  }
+})();
+
+// === TOC ===
+function toggleToc(){
+  var menu=document.getElementById('tocMenu');
+  var btn=document.getElementById('tocToggle');
+  menu.classList.toggle('open');
+  btn.classList.toggle('open');
+  btn.textContent=menu.classList.contains('open')?'✕ セクション':'☰';
+}
+function tocJump(id){
+  var sec=document.getElementById(id);
+  if(sec){
+    sec.classList.remove('collapsed');
+    toggleToc();
+    setTimeout(function(){sec.scrollIntoView({behavior:'smooth',block:'start'})},100);
+  }
+}
+function toggleAllSections(expand){
+  document.querySelectorAll('[data-accordion]').forEach(function(sec){
+    if(expand)sec.classList.remove('collapsed');
+    else sec.classList.add('collapsed');
+  });
+}
+</script>
+</body>
+</html>
